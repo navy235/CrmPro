@@ -24,13 +24,16 @@ namespace CrmPro.Controllers
 
         public ActionResult Index(int ID)
         {
-            var model = new PlanLogSearchViewModel();
-            return View(model);
+            var model = new PlanLogSearchViewModel()
+            {
+                ID = ID
+            };
+            return PartialView(model);
         }
 
         public ActionResult getall(PlanLogSearchViewModel model, int page = 1, int rows = 10)
         {
-            var query = PlanLogService.GetALL().Include(x=>x.AddMember);
+            var query = PlanLogService.GetALL().Include(x => x.AddMember);
 
 
             if (!string.IsNullOrEmpty(model.PlanLog_SearchName))
@@ -42,22 +45,24 @@ namespace CrmPro.Controllers
 
             var data = query.Select(x => new PlanLogListViewModel()
             {
-               ID = x.ID,
-         
-               CompanyID = x.CompanyID,
-         
-               AddTime = x.AddTime,
-         
-               PlanTime = x.PlanTime,
-         
-               Content = x.Content,
-         
-               Comment = x.Comment,
-         
-               CommentTitme = x.CommentTitme,
-         
-               AddUser = x.AddUser,
-         
+                ID = x.ID,
+
+                CompanyID = x.CompanyID,
+
+                AddTime = x.AddTime,
+
+                PlanTime = x.PlanTime,
+
+                Content = x.Content,
+
+                Comment = x.Comment,
+
+                CommentTitme = x.CommentTitme,
+
+                AddUser = x.AddUser,
+
+                AddUserName = x.AddMember.NickName
+
             })
             .OrderBy(x => x.ID)
             .Skip((page - 1) * rows)
@@ -109,32 +114,15 @@ namespace CrmPro.Controllers
 
         public ActionResult Edit(int ID)
         {
-            var entity = PlanLogService.GetALL().Single(x => x.ID == ID);
-         
+            var entity = PlanLogService.Find(ID);
             var model = new PlanLogViewModel()
             {
-               ID = entity.ID,
-         
-               CompanyID = entity.CompanyID,
-         
-               AddTime = entity.AddTime,
-         
-               PlanTime = entity.PlanTime,
-         
-               Content = entity.Content,
-         
-               Comment = entity.Comment,
-         
-               CommentTitme = entity.CommentTitme,
-         
-               AddUser = entity.AddUser,
-         
+                CompanyID = entity.CompanyID,
+                ID = entity.ID,
+                Content = entity.Content
             };
-
             return PartialView(model);
         }
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -181,6 +169,48 @@ namespace CrmPro.Controllers
                 result.AddServiceError(result.Message);
                 LogHelper.WriteLog("删除PlanLog错误", ex);
             }
+            return Json(result);
+        }
+
+        public ActionResult Comment(int ID)
+        {
+            var entity = PlanLogService.Find(ID);
+
+            var model = new PlanLogCommentViewModel()
+            {
+                ID = entity.ID,
+                Comment = entity.Comment,
+                CommentTime = entity.CommentTitme
+            };
+            
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Comment(PlanLogCommentViewModel model)
+        {
+            ServiceResult result = new ServiceResult();
+            if (!ModelState.IsValid)
+            {
+                result.Message = "表单输入有误,请仔细填写表单！";
+                result.AddServiceError("表单输入有误,请仔细填写表单！");
+            }
+            else
+            {
+                try
+                {
+                    PlanLogService.Comment(model);
+                    result.Message = "点评计划日志成功！";
+                }
+                catch (Exception ex)
+                {
+                    result.Message = "点评计划日志失败!";
+                    result.AddServiceError(Utilities.GetInnerMostException(ex));
+                    LogHelper.WriteLog("用户:" + CookieHelper.MemberID + "点评计划日志失败!", ex);
+                }
+            }
+
             return Json(result);
         }
 

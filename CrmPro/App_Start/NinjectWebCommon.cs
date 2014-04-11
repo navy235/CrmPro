@@ -95,6 +95,7 @@ namespace CrmPro.App_Start
 
             kernel.Bind<IMember_ActionService>().To<Member_ActionService>().InRequestScope();
 
+            kernel.Bind<IPlanLogService>().To<PlanLogService>().InRequestScope();
 
         }
     }

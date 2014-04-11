@@ -39,14 +39,13 @@ namespace CrmPro.Service
 
         public PlanLog Create(PlanLogViewModel model)
         {
-            var entity = new PlanLog();
-            entity.CompanyID=model.CompanyID;
-            entity.AddTime=model.AddTime;
-            entity.PlanTime=model.PlanTime;
-            entity.Content=model.Content;
-            entity.Comment=model.Comment;
-            entity.CommentTitme=model.CommentTitme;
-            entity.AddUser=model.AddUser;
+            PlanLog entity = new PlanLog();
+            entity.AddTime = DateTime.Now;
+            entity.AddUser = 227;
+            entity.CompanyID = model.CompanyID;
+            entity.Content = model.Content;
+            entity.PlanTime = model.PlanTime;
+            entity.CommentTitme = DateTime.Now.AddMonths(1);
             db.Add<PlanLog>(entity);
             db.Commit();
             return entity;
@@ -56,28 +55,23 @@ namespace CrmPro.Service
         {
             var entity = Find(model.ID);
             db.Attach<PlanLog>(entity);
-            entity.CompanyID=model.CompanyID;
-            entity.AddTime=model.AddTime;
-            entity.PlanTime=model.PlanTime;
-            entity.Content=model.Content;
-            entity.Comment=model.Comment;
-            entity.CommentTitme=model.CommentTitme;
-            entity.AddUser=model.AddUser;
+            entity.CompanyID = model.CompanyID;
+            entity.AddTime = model.AddTime;
+            entity.PlanTime = model.PlanTime;
+            entity.Content = model.Content;
+            entity.Comment = model.Comment;
+            entity.CommentTitme = model.CommentTitme;
+            entity.AddUser = model.AddUser;
             db.Commit();
         }
 
         public PlanLog Update(PlanLogViewModel model)
         {
 
-            var entity = Find(model.ID);
+            PlanLog entity = Find(model.ID);
             db.Attach<PlanLog>(entity);
-            entity.CompanyID=model.CompanyID;
-            entity.AddTime=model.AddTime;
-            entity.PlanTime=model.PlanTime;
-            entity.Content=model.Content;
-            entity.Comment=model.Comment;
-            entity.CommentTitme=model.CommentTitme;
-            entity.AddUser=model.AddUser;
+            entity.Content = model.Content;
+            entity.PlanTime = model.PlanTime;
             db.Commit();
             return entity;
         }
@@ -94,5 +88,13 @@ namespace CrmPro.Service
             return GetALL().Single(x => x.ID == ID);
         }
 
+        public void Comment(PlanLogCommentViewModel model)
+        {
+            PlanLog entity = Find(model.ID);
+            db.Attach<PlanLog>(entity);
+            entity.Comment = model.Comment;
+            entity.CommentTitme = model.CommentTime;
+            db.Commit();
+        }
     }
 }

@@ -184,6 +184,7 @@ namespace CrmPro.Models
                 .HasForeignKey(o => o.AddUser)
                 .WillCascadeOnDelete(false);
 
+
             modelBuilder.Entity<TraceLog>()
               .HasRequired(m => m.CustomerCompany)
               .WithMany(c => c.TraceLog)

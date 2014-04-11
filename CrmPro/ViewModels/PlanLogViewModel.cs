@@ -12,34 +12,55 @@ namespace CrmPro.ViewModels
 {
     public class PlanLogViewModel
     {
+        public PlanLogViewModel()
+        {
+            this.PlanTime = DateTime.Now;
+        }
+
         [HiddenInput(DisplayValue = false)]
         public int ID { get; set; }
 
-        [Display(Name = "CompanyID")]
-		public int CompanyID { get; set; }
-        
-        [Display(Name = "AddTime")]
-		public DateTime AddTime { get; set; }
-        
-        [Display(Name = "PlanTime")]
-		public DateTime PlanTime { get; set; }
-        
-        [Display(Name = "Content")]
-		public string Content { get; set; }
-        
-        [Display(Name = "Comment")]
-		public string Comment { get; set; }
-        
-        [Display(Name = "CommentTitme")]
-		public DateTime CommentTitme { get; set; }
-        
-        [Display(Name = "AddUser")]
-		public int AddUser { get; set; }
-        
+        [HiddenInput(DisplayValue = false)]
+        public int CompanyID { get; set; }
+
+        [DataType(DataType.DateTime)]
+        [Display(Name = "预计时间")]
+        [UIHint("Date")]
+        public DateTime PlanTime { get; set; }
+
+        [Required(ErrorMessage = "请填写内容")]
+        [Display(Name = "内容")]
+        [DataType(DataType.MultilineText)]
+        public string Content { get; set; }
+
+    }
+
+    public class PlanLogCommentViewModel
+    {
+        public PlanLogCommentViewModel()
+        {
+            this.CommentTime = DateTime.Now;
+        }
+
+        [HiddenInput(DisplayValue = false)]
+        public int ID { get; set; }
+
+        [Required(ErrorMessage = "请填写点评内容")]
+        [Display(Name = "点评")]
+        [DataType(DataType.MultilineText)]
+        public string Comment { get; set; }
+
+        [DataType(DataType.DateTime)]
+        [Display(Name = "提醒时间")]
+        [UIHint("Date")]
+        public DateTime CommentTime { get; set; }
     }
 
     public class PlanLogSearchViewModel
     {
+        [HiddenInput(DisplayValue = false)]
+        public int ID { get; set; }
+
         [Display(Name = "名称")]
         public string PlanLog_SearchName { get; set; }
 
@@ -47,22 +68,23 @@ namespace CrmPro.ViewModels
 
     public class PlanLogListViewModel
     {
-		public int ID { get; set; }
-        
-		public int CompanyID { get; set; }
-        
-		public DateTime AddTime { get; set; }
-        
-		public DateTime PlanTime { get; set; }
-        
-		public string Content { get; set; }
-        
-		public string Comment { get; set; }
-        
-		public DateTime CommentTitme { get; set; }
-        
-		public int AddUser { get; set; }
-        
+        public int ID { get; set; }
+
+        public int CompanyID { get; set; }
+
+        public DateTime AddTime { get; set; }
+
+        public DateTime PlanTime { get; set; }
+
+        public string Content { get; set; }
+
+        public string Comment { get; set; }
+
+        public DateTime CommentTitme { get; set; }
+
+        public int AddUser { get; set; }
+
+        public string AddUserName { get; set; }
     }
 }
 

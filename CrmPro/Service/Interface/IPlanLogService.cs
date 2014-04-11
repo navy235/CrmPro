@@ -25,5 +25,7 @@ namespace CrmPro.Service.Interface
         void Delete(PlanLog model);
 
         PlanLog Find(int ID);
+
+        void Comment(PlanLogCommentViewModel model);
     }
 }
