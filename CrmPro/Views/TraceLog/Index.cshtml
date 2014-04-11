@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "TraceLog";
+}
+
+<table id="TraceLog_dg" title="TraceLog" class="easyui-datagrid"  
+    url="@Url.Action("getall")"
+    toolbar="#TraceLog_toolbar" pagination="true" pagePosition="bottom"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+           <th field="ID" width="50"  >ID</th>
+           <th field="CompanyID" width="50"  >CompanyID</th>
+           <th field="AddTime" width="50"  >AddTime</th>
+           <th field="Content" width="50"  >Content</th>
+           <th field="Comment" width="50"  >Comment</th>
+           <th field="CommentTitme" width="50"  >CommentTitme</th>
+           <th field="AddUser" width="50"  >AddUser</th>
+           <th field="RelationID" width="50"  >RelationID</th>
+        </tr>
+    </thead>
+</table>
+<div id="TraceLog_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="TraceLog_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="TraceLog_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="TraceLog_deleteSingle()">删除</a>
+    <div id="searchbox">
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="button"  onclick="TraceLog_getSearch()" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-search"></i>
+                查 询</button>
+        </div>
+    </div>
+</div>
+
+<div id="TraceLog_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:TraceLog_onformLoad" style="width: 500px; height: 300px;">
+</div>
+
+<script type="text/javascript">
+
+    function TraceLog_create() {
+        var url = "@Url.Action("Create")";
+        $('#TraceLog_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function TraceLog_onformLoad() {
+        var title = $('#TraceLog_kwindow').find('form').attr('formtitle');
+        $('#TraceLog_kwindow')
+        .dialog('setTitle', title)
+        $.validator.unobtrusive.parse($('#TraceLog_kwindow'));
+    }
+
+    function TraceLog_edit() {
+        var row = $('#TraceLog_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.ID;
+            $('#TraceLog_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function TraceLog_deleteSingle() {
+        var row = $('#TraceLog_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                     $.post("@Url.Action("Delete")", { ID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if(res.Success){
+                            $('#TraceLog_dg').datagrid('reload');
+                        }
+                     })
+                }
+            });
+        }
+    }
+
+    function TraceLog_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if(res.Success){
+            $('#TraceLog_kwindow').dialog('close')
+            $('#TraceLog_dg').datagrid('reload');
+        }
+    }
+
+    function TraceLog_getSearch() {
+        $('#TraceLog_dg').datagrid('load', {
+            TraceLog_SearchName: $('#TraceLog_SearchName').val()
+        });
+    }
+    $(function () {
+        var resizeHandler = null;
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#TraceLog_dg').datagrid('resize');
+            }, 200);
+        });
+    })
+</script>
+

@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.Title = "CustomerCate";
+}
+
+<table id="CustomerCate_dg" title="CustomerCate" class="easyui-treegrid"  
+    url="@Url.Action("getall")" idField='ID' treeField='CateName'
+    toolbar="#CustomerCate_toolbar" pagination="true" pagePosition="bottom"  pageList="[500,1000]"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+           <th field="ID" width="50">ID</th>
+           <th field="CateName" width="50">CateName</th>
+           <th field="PID" width="50">PID</th>
+           <th field="Code" width="50">Code</th>
+           <th field="Level" width="50">Level</th>
+           <th field="OrderIndex" width="50">OrderIndex</th>
+        </tr>
+    </thead>
+</table>
+<div id="CustomerCate_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="CustomerCate_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="CustomerCate_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="CustomerCate_deleteSingle()">删除</a>
+    <div id="searchbox">
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="button"  onclick="CustomerCate_getSearch()" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-search"></i>
+                查 询</button>
+        </div>
+    </div>
+</div>
+
+<div id="CustomerCate_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:CustomerCate_onformLoad" style="width: 500px; height: 300px;">
+</div>
+
+<script type="text/javascript">
+
+    function CustomerCate_create() {
+        var url = "@Url.Action("Create")";
+        $('#CustomerCate_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function CustomerCate_onformLoad() {
+        var title = $('#CustomerCate_kwindow').find('form').attr('formtitle');
+        $('#CustomerCate_kwindow')
+        .dialog('setTitle', title)
+        $.validator.unobtrusive.parse($('#CustomerCate_kwindow'));
+    }
+
+    function CustomerCate_edit() {
+        var row = $('#CustomerCate_dg').treegrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.ID;
+            $('#CustomerCate_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function CustomerCate_deleteSingle() {
+        var row = $('#CustomerCate_dg').treegrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                     $.post("@Url.Action("Delete")", { ID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if(res.Success){
+                            $('#CustomerCate_dg').treegrid('reload');
+                        }
+                     })
+                }
+            });
+        }
+    }
+
+    function CustomerCate_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if(res.Success){
+            $('#CustomerCate_kwindow').dialog('close')
+            $('#CustomerCate_dg').treegrid('reload');
+        }
+    }
+
+    function CustomerCate_getSearch() {
+        $('#CustomerCate_dg').treegrid('load', {
+            CustomerCate_SearchName: $('#CustomerCate_SearchName').val()
+        });
+    }
+    
+     $(function () {
+        var resizeHandler = null;
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#CustomerCate_dg').treegrid('resize');
+            }, 200);
+        });
+    })
+</script>
+

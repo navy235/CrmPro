@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "Member";
+}
+
+<table id="Member_dg" title="Member" class="easyui-datagrid"  
+    url="@Url.Action("getall")"
+    toolbar="#Member_toolbar" pagination="true" pagePosition="bottom"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+            <th field="DepartmentName" width="50">部门</th>
+            <th field="JobTitleName" width="50">职位</th>
+            <th field="IsLeader" width="50" formatter="Maitonn.JHelper.BoolFormatter">负责人</th>
+            <th field="NickName" width="50">姓名</th>
+            <th field="Sex" width="50" formatter="Maitonn.JHelper.BoolFormatterSex">性别</th>
+            <th field="Mobile" width="50">手机</th>
+            <th field="Mobile1" width="50">手机2</th>
+            <th field="Email" width="50">电子邮箱</th>
+            <th field="QQ" width="50">QQ</th>
+            <th field="Address" width="50">地址</th>
+            <th field="GroupName" width="50">所属群组</th>
+        </tr>
+    </thead>
+</table>
+<div id="Member_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="Member_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="Member_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="Member_deleteSingle()">删除</a>
+    <div id="searchbox">
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="button" onclick="Member_getSearch()" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-search"></i>
+                查 询</button>
+        </div>
+    </div>
+</div>
+
+<div id="Member_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:Member_onformLoad" style="width: 500px; height: auto; max-height: 700px;">
+</div>
+
+<script type="text/javascript">
+
+    function Member_create() {
+        var url = "@Url.Action("Create")";
+        $('#Member_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function Member_onformLoad() {
+        var title = $('#Member_kwindow').find('form').attr('formtitle');
+        $('#Member_kwindow')
+        .dialog('setTitle', title).dialog('center');
+        $.validator.unobtrusive.parse($('#Member_kwindow'));
+    }
+
+    function Member_edit() {
+        var row = $('#Member_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.MemberID;
+            $('#Member_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function Member_deleteSingle() {
+        var row = $('#Member_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                    $.post("@Url.Action("Delete")", { MemberID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if (res.Success) {
+                            $('#Member_dg').datagrid('reload');
+                        }
+                    })
+                }
+            });
+        }
+    }
+
+    function Member_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if (res.Success) {
+            $('#Member_kwindow').dialog('close')
+            $('#Member_dg').datagrid('reload');
+        }
+    }
+
+    function Member_getSearch() {
+        $('#Member_dg').datagrid('load', {
+            Member_SearchName: $('#Member_SearchName').val()
+        });
+    }
+    $(function () {
+        var resizeHandler = null;
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#Member_dg').datagrid('resize');
+            }, 200);
+        });
+    })
+</script>
+

@@ -1,0 +1,14 @@
+@model  DateTime?
+@{
+    bool enable = true;
+    if (ViewData.ModelMetadata.AdditionalValues.ContainsKey("DateEnable"))
+    {
+        enable = Convert.ToBoolean(ViewData.ModelMetadata.AdditionalValues["DateEnable"]);
+    }
+}
+
+@Html.TextBoxFor(m => m, new Dictionary<string, object>() { 
+    {"class","easyui-datebox"},
+    {"data-options","formatter:Maitonn.JHelper.DateboxFormatter,disabled:"+(enable?"false":"true")},
+
+})

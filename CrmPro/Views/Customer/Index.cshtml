@@ -1,0 +1,124 @@
+﻿@model CustomerSearchViewModel
+@{
+    ViewBag.Title = "Customer";
+}
+
+<table id="Customer_dg" class="easyui-datagrid"  
+    url="@Url.Action("getall", new { ID = Model.ID, Customer_SearchName = "" })"
+    toolbar="#Customer_toolbar" pagination="true" pagePosition="bottom"  border="false"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+            <th field="JobIDName" width="50">类型</th>
+            <th field="Name" width="50">姓名</th>
+            <th field="Jobs" width="50">职位</th>
+            <th field="IsLeap" width="50" formatter="Maitonn.JHelper.BoolFormatterBarthday">生日类型</th>
+            <th field="BirthDay1" width="50">生日</th>
+            <th field="Mobile" width="50">手机</th>
+            <th field="Address" width="50">地址</th>
+            <th field="AddUserName" width="50">录入者</th>
+            <th field="AddTime" width="50" formatter="Maitonn.JHelper.DateFormatter">录入时间</th>
+
+        </tr>
+    </thead>
+</table>
+<div id="Customer_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="Customer_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="Customer_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="Customer_deleteSingle()">删除</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-view" plain="true" onclick="Customer_viewSingle()">查看</a>
+    <div id="searchbox">
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="button" onclick="Customer_getSearch()" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-search"></i>
+                查 询</button>
+        </div>
+    </div>
+</div>
+
+<div id="Customer_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:Customer_onformLoad" style="width: 500px; height: auto;">
+</div>
+
+<div id="Customer_viewwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:Customer_onviewformLoad,title:'客户人员信息查看'" style="width: 500px; height: auto;">
+</div>
+
+
+<script type="text/javascript">
+
+    function Customer_create() {
+        var url = "@Url.Action("Create")/@(Model.ID)";
+        $('#Customer_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function Customer_onformLoad() {
+        var title = $('#Customer_kwindow').find('form').attr('formtitle');
+        $('#Customer_kwindow')
+        .dialog('setTitle', title).dialog('center');
+        $.validator.unobtrusive.parse($('#Customer_kwindow'));
+    }
+
+
+    function Customer_viewSingle() {
+        var row = $('#Customer_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要查看的行');
+        } else {
+            var url = "@Url.Action("Details")" + "/" + row.ID;
+            $('#Customer_viewwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+
+    }
+
+    function Customer_onviewformLoad() {
+        $('#Customer_viewwindow').dialog('center');
+    }
+
+    function Customer_edit() {
+        var row = $('#Customer_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.ID;
+            $('#Customer_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function Customer_deleteSingle() {
+        var row = $('#Customer_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                    $.post("@Url.Action("Delete")", { ID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if (res.Success) {
+                            $('#Customer_dg').datagrid('reload');
+                        }
+                    })
+                }
+            });
+        }
+    }
+
+    function Customer_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if (res.Success) {
+            $('#Customer_kwindow').dialog('close')
+            $('#Customer_dg').datagrid('reload');
+        }
+    }
+
+    function Customer_getSearch() {
+        $('#Customer_dg').datagrid('load', {
+            Customer_SearchName: $('#Customer_SearchName').val()
+        });
+    }
+
+</script>
+

@@ -1,0 +1,26 @@
+﻿<div class="ajax-form-container">
+    @using (Ajax.BeginForm("edit", "Member", new AjaxOptions()
+{
+    OnSuccess = "Member_ajaxFormSuccess",
+    OnFailure = "ajaxFormFailure"
+}, new { formtitle = "编辑Member" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="submit" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-save"></i>
+                保 存</button>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#AddBirthDay').on('click', function () {
+            var enable = $('#AddBirthDay').prop('checked');
+            var statuStr = enable ? 'enable' : 'disable';
+            $('#BirthDay').datebox(statuStr);
+        })
+    })
+</script>

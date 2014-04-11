@@ -1,0 +1,9 @@
+@model  string
+@{
+    string name = ViewData.TemplateInfo.GetFullHtmlFieldName("");
+    string listValues = ViewData["Data_" + name].ToString();
+}
+
+<span>@listValues</span>
+
+

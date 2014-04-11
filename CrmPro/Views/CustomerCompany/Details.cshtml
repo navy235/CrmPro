@@ -1,0 +1,44 @@
+﻿@model CustomerCompanyViewModel
+@{
+    ViewBag.Title = Model.Name;
+   
+}
+
+<div class="easyui-layout" id="detailsLayout" data-options="fit:true,border:false">
+    <div data-options="region:'north',title:'@(Model.Name)详情'" style="height: 153px">
+        <div class="display-container col4 ">
+            @Html.DisplayForModel()
+            <div class="display-item    ">
+                <div class="display-label">访问次数</div>
+                <div class="display-field" data-showcontent="@Url.Action("Visits", "ajaxService", new { ID = Model.ID })"></div>
+            </div>
+            <div class="display-item    ">
+                <div class="display-label">录入者</div>
+                <div class="display-field" data-showcontent="@Url.Action("MemberName", "ajaxService", new { ID = Model.MemberID })"></div>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',border:false">
+        <div class="easyui-tabs" id="detailsTab" data-options="fit:true">
+            <div title="人员信息" href="@Url.Action("index", "customer", new { ID = Model.ID })">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    $(function () {
+        var resizeHandler = null;
+
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#detailsLayout').layout('resize');
+            }, 500);
+        });
+
+
+    })
+</script>

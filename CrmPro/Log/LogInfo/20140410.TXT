@@ -1,0 +1,40 @@
+
+ ExLogTime :2014-04-10 10:26:02,828 [27] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+添加JobTitleCate成功 
+
+ ExLogTime :2014-04-10 10:26:06,468 [10] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+删除JobTitleCate成功 
+
+ ExLogTime :2014-04-10 10:55:06,825 [7] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+编辑ContractCate成功 
+
+ ExLogTime :2014-04-10 10:55:12,188 [16] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+编辑ContractCate成功 
+
+ ExLogTime :2014-04-10 10:55:15,734 [5] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+编辑ContractCate成功 
+
+ ExLogTime :2014-04-10 15:43:32,259 [22] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+添加CustomerCompany成功 
+
+ ExLogTime :2014-04-10 15:46:05,407 [171] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+编辑CustomerCompany成功 
+
+ ExLogTime :2014-04-10 15:46:13,819 [22] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+编辑CustomerCompany成功 

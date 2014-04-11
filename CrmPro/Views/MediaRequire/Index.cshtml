@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "MediaRequire";
+}
+
+<table id="MediaRequire_dg" title="MediaRequire" class="easyui-datagrid"  
+    url="@Url.Action("getall")"
+    toolbar="#MediaRequire_toolbar" pagination="true" pagePosition="bottom"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+           <th field="ID" width="50"  >ID</th>
+           <th field="CompanyID" width="50"  >CompanyID</th>
+           <th field="Name" width="50"  >Name</th>
+           <th field="Description" width="50"  >Description</th>
+           <th field="AttachmentPath" width="50"  >AttachmentPath</th>
+           <th field="DepartmentID" width="50"  >DepartmentID</th>
+           <th field="SenderID" width="50"  >SenderID</th>
+           <th field="ResolveID" width="50"  >ResolveID</th>
+           <th field="IsRoot" width="50"  >IsRoot</th>
+           <th field="PID" width="50"  >PID</th>
+           <th field="Status" width="50"  >Status</th>
+           <th field="AddUser" width="50"  >AddUser</th>
+           <th field="AddTime" width="50"  >AddTime</th>
+        </tr>
+    </thead>
+</table>
+<div id="MediaRequire_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="MediaRequire_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="MediaRequire_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="MediaRequire_deleteSingle()">删除</a>
+    <div id="searchbox">
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="button"  onclick="MediaRequire_getSearch()" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-search"></i>
+                查 询</button>
+        </div>
+    </div>
+</div>
+
+<div id="MediaRequire_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:MediaRequire_onformLoad" style="width: 500px; height: 300px;">
+</div>
+
+<script type="text/javascript">
+
+    function MediaRequire_create() {
+        var url = "@Url.Action("Create")";
+        $('#MediaRequire_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function MediaRequire_onformLoad() {
+        var title = $('#MediaRequire_kwindow').find('form').attr('formtitle');
+        $('#MediaRequire_kwindow')
+        .dialog('setTitle', title)
+        $.validator.unobtrusive.parse($('#MediaRequire_kwindow'));
+    }
+
+    function MediaRequire_edit() {
+        var row = $('#MediaRequire_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.ID;
+            $('#MediaRequire_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function MediaRequire_deleteSingle() {
+        var row = $('#MediaRequire_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                     $.post("@Url.Action("Delete")", { ID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if(res.Success){
+                            $('#MediaRequire_dg').datagrid('reload');
+                        }
+                     })
+                }
+            });
+        }
+    }
+
+    function MediaRequire_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if(res.Success){
+            $('#MediaRequire_kwindow').dialog('close')
+            $('#MediaRequire_dg').datagrid('reload');
+        }
+    }
+
+    function MediaRequire_getSearch() {
+        $('#MediaRequire_dg').datagrid('load', {
+            MediaRequire_SearchName: $('#MediaRequire_SearchName').val()
+        });
+    }
+    $(function () {
+        var resizeHandler = null;
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#MediaRequire_dg').datagrid('resize');
+            }, 200);
+        });
+    })
+</script>
+

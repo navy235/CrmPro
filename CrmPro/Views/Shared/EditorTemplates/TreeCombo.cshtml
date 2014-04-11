@@ -1,0 +1,25 @@
+@model  string
+@{
+    var name = ViewData.TemplateInfo.GetFullHtmlFieldName("");
+    var loadUrl = ViewData[name + "_LoadUrl"].ToString();
+    var prefix = ViewData[name + "_Prefix"] != null ? ViewData[name + "_Prefix"].ToString() : string.Empty;
+    var multiple = true;
+    if (ViewData.ModelMetadata.AdditionalValues.ContainsKey("Multiple"))
+    {
+        multiple = Convert.ToBoolean(ViewData.ModelMetadata.AdditionalValues["Multiple"]);
+    }
+}
+
+@Html.TextBoxFor(m => m, new { tabindex = -1, @class = "field-valid-text" })
+<script type="text/javascript">
+    $(function () {
+        $('#@(name)').treeCombo({
+            url: '@loadUrl',
+            multiple: @(multiple ? "true" : "false"),
+            value: '@Model',
+            prefix: '@prefix'
+        })
+    })
+</script>
+
+

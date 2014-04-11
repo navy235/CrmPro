@@ -1,0 +1,148 @@
+﻿@{
+    ViewBag.Title = "CustomerCompany";
+}
+
+<table id="CustomerCompany_dg" title="CustomerCompany" class="easyui-datagrid"  
+    url="@Url.Action("getall")"
+    toolbar="#CustomerCompany_toolbar" pagination="true" pagePosition="bottom"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+            <th field="ID" width="50">ID</th>
+            <th field="Name" width="50">Name</th>
+            <th field="BrandName" width="50">BrandName</th>
+            <th field="CityValue" width="50">CityValue</th>
+
+            <th field="IndustryValue" width="50">IndustryValue</th>
+            <th field="CustomerCateName" width="50">CustomerCateName</th>
+
+            <th field="Fax" width="50">Fax</th>
+            <th field="Phone" width="50">Phone</th>
+            <th field="Address" width="50">Address</th>
+
+            <th field="AddUserName" width="50">AddUserName</th>
+            <th field="AddTime" width="50" formatter="Maitonn.JHelper.DateFormatter">AddTime</th>
+
+        </tr>
+    </thead>
+</table>
+<div id="CustomerCompany_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="CustomerCompany_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="CustomerCompany_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="CustomerCompany_deleteSingle()">删除</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-view" plain="true" onclick="CustomerCompany_view()">查看</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search" plain="true" onclick="CustomerCompany_search()">高级查询</a>
+</div>
+
+<div id="CustomerCompany_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:CustomerCompany_onformLoad" style="width: 500px; height: auto;">
+</div>
+
+<div id="CustomerCompany_searchwindow" class="easyui-dialog" data-options="iconCls:'icon-search',modal:true,closed:true,title:'客户信息查询'" style="width: 350px; height: auto;">
+    <div class="ajax-form-container">
+        <form id="CustomerCompany_searchform">
+            @Html.EditorForModel()
+            <div class="form-field form-field-submit">
+                <button type="button" onclick="CustomerCompany_getSearch()" class="btn btn-green btn-save ">
+                    <i class="icon-button icon-btn-search"></i>
+                    查 询</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+
+    $(function () {
+        var resizeHandler = null;
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#CustomerCompany_dg').datagrid('resize');
+            }, 200);
+        });
+        $('#CustomerCompany_IsInTime').on('click', function () {
+            var enable = $('#CustomerCompany_IsInTime').prop('checked');
+            var statuStr = enable ? 'enable' : 'disable';
+
+            $('#CustomerCompany_StartTime').datebox(statuStr);
+            $('#CustomerCompany_EndTime').datebox(statuStr);
+
+        })
+    })
+
+    function CustomerCompany_view() {
+        var row = $('#CustomerCompany_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要查看的行');
+        } else {
+            var url = "@Url.Action("Details")" + "/" + row.ID;
+            var name = row.Name;
+            Maitonn.JHelper.addTab(name, url, "icon-view");
+        }
+    }
+
+    function CustomerCompany_search() {
+        $('#CustomerCompany_searchwindow').dialog('open').dialog('center');
+    }
+
+
+    function CustomerCompany_create() {
+        var url = "@Url.Action("Create")";
+        $('#CustomerCompany_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function CustomerCompany_onformLoad() {
+        var title = $('#CustomerCompany_kwindow').find('form').attr('formtitle');
+        $('#CustomerCompany_kwindow')
+        .dialog('setTitle', title).dialog('center');
+        $.validator.unobtrusive.parse($('#CustomerCompany_kwindow'));
+    }
+
+    function CustomerCompany_edit() {
+        var row = $('#CustomerCompany_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.ID;
+            $('#CustomerCompany_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function CustomerCompany_deleteSingle() {
+        var row = $('#CustomerCompany_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                    $.post("@Url.Action("Delete")", { ID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if (res.Success) {
+                            $('#CustomerCompany_dg').datagrid('reload');
+                        }
+                    })
+                }
+            });
+        }
+    }
+
+    function CustomerCompany_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if (res.Success) {
+            $('#CustomerCompany_kwindow').dialog('close')
+            $('#CustomerCompany_dg').datagrid('reload');
+        }
+    }
+
+    function CustomerCompany_getSearch() {
+        var data = $('#CustomerCompany_searchform').serializeFormJSON();
+        $('#CustomerCompany_searchwindow').dialog('close')
+        $('#CustomerCompany_dg').datagrid('load', data);
+    }
+
+</script>
+

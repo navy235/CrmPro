@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "MyShare";
+}
+<table id="CustomerCompany_dg" title="CustomerCompany" class="easyui-datagrid"  
+    url="@Url.Action("getall_myshare")"
+    toolbar="#CustomerCompany_toolbar" pagination="true" pagePosition="bottom"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+            <th field="ID" width="50">ID</th>
+            <th field="Name" width="50">Name</th>
+            <th field="BrandName" width="50">BrandName</th>
+            <th field="CityValue" width="50">CityValue</th>
+
+            <th field="IndustryValue" width="50">IndustryValue</th>
+            <th field="CustomerCateName" width="50">CustomerCateName</th>
+
+            <th field="Fax" width="50">Fax</th>
+            <th field="Phone" width="50">Phone</th>
+            <th field="Address" width="50">Address</th>
+
+            <th field="AddUserName" width="50">AddUserName</th>
+            <th field="AddTime" width="50" formatter="Maitonn.JHelper.DateFormatter">AddTime</th>
+
+        </tr>
+    </thead>
+</table>
+<div id="CustomerCompany_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-view" plain="true" onclick="CustomerCompany_view()">查看</a>
+</div>
+<script type="text/javascript">
+    function CustomerCompany_view() {
+        var row = $('#CustomerCompany_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要查看的行');
+        } else {
+            var url = "@Url.Action("Details")" + "/" + row.ID;
+            var name = row.Name;
+            Maitonn.JHelper.addTab(name, url, "icon-view");
+        }
+    }
+</script>

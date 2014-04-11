@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "PlanLog";
+}
+
+<table id="PlanLog_dg" title="PlanLog" class="easyui-datagrid"  
+    url="@Url.Action("getall")"
+    toolbar="#PlanLog_toolbar" pagination="true" pagePosition="bottom"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+            <th field="ID" width="50">ID</th>
+            <th field="CompanyID" width="50">CompanyID</th>
+            <th field="AddTime" width="50">录入时间</th>
+            <th field="AddUserName" width="50">录入者</th>
+            <th field="PlanTime" width="50">计划时间</th>
+            <th field="Content" width="50">内容</th>
+            <th field="Comment" width="50">Comment</th>
+            <th field="CommentTitme" width="50">CommentTitme</th>
+        </tr>
+    </thead>
+</table>
+<div id="PlanLog_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="PlanLog_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="PlanLog_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="PlanLog_deleteSingle()">删除</a>
+    <div id="searchbox">
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="button" onclick="PlanLog_getSearch()" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-search"></i>
+                查 询</button>
+        </div>
+    </div>
+</div>
+
+<div id="PlanLog_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:PlanLog_onformLoad" style="width: 500px; height: 300px;">
+</div>
+
+<script type="text/javascript">
+
+    function PlanLog_create() {
+        var url = "@Url.Action("Create")";
+        $('#PlanLog_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function PlanLog_onformLoad() {
+        var title = $('#PlanLog_kwindow').find('form').attr('formtitle');
+        $('#PlanLog_kwindow')
+        .dialog('setTitle', title)
+        $.validator.unobtrusive.parse($('#PlanLog_kwindow'));
+    }
+
+    function PlanLog_edit() {
+        var row = $('#PlanLog_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.ID;
+            $('#PlanLog_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function PlanLog_deleteSingle() {
+        var row = $('#PlanLog_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                    $.post("@Url.Action("Delete")", { ID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if (res.Success) {
+                            $('#PlanLog_dg').datagrid('reload');
+                        }
+                    })
+                }
+            });
+        }
+    }
+
+    function PlanLog_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if (res.Success) {
+            $('#PlanLog_kwindow').dialog('close')
+            $('#PlanLog_dg').datagrid('reload');
+        }
+    }
+
+    function PlanLog_getSearch() {
+        $('#PlanLog_dg').datagrid('load', {
+            PlanLog_SearchName: $('#PlanLog_SearchName').val()
+        });
+    }
+    $(function () {
+        var resizeHandler = null;
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#PlanLog_dg').datagrid('resize');
+            }, 200);
+        });
+    })
+</script>
+

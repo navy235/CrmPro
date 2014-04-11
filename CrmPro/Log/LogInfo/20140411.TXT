@@ -1,0 +1,20 @@
+
+ ExLogTime :2014-04-11 15:21:56,175 [106] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+添加Member成功 
+
+ ExLogTime :2014-04-11 17:12:12,982 [71] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+编辑Member成功 
+
+ ExLogTime :2014-04-11 17:13:00,039 [70] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+添加Customer成功 
+
+ ExLogTime :2014-04-11 17:15:24,185 [70] 
+ ExLogLevel :INFO  
+ ExLogClass :loginfo [(null)] 
+编辑Customer成功 

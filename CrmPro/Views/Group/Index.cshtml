@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "Group";
+}
+
+<table id="Group_dg" title="Group" class="easyui-datagrid"  
+    url="@Url.Action("getall")"
+    toolbar="#Group_toolbar" pagination="true" pagePosition="bottom"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+           <th field="ID" width="50"  >ID</th>
+           <th field="Name" width="50"  >Name</th>
+           <th field="Description" width="50"  >Description</th>
+           <th field="Content" width="50"  >Content</th>
+        </tr>
+    </thead>
+</table>
+<div id="Group_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="Group_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="Group_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="Group_deleteSingle()">删除</a>
+    <div id="searchbox">
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="button"  onclick="Group_getSearch()" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-search"></i>
+                查 询</button>
+        </div>
+    </div>
+</div>
+
+<div id="Group_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:Group_onformLoad" style="width: 500px; height: 300px;">
+</div>
+
+<script type="text/javascript">
+
+    function Group_create() {
+        var url = "@Url.Action("Create")";
+        $('#Group_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function Group_onformLoad() {
+        var title = $('#Group_kwindow').find('form').attr('formtitle');
+        $('#Group_kwindow')
+        .dialog('setTitle', title)
+        $.validator.unobtrusive.parse($('#Group_kwindow'));
+    }
+
+    function Group_edit() {
+        var row = $('#Group_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.ID;
+            $('#Group_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function Group_deleteSingle() {
+        var row = $('#Group_dg').datagrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                     $.post("@Url.Action("Delete")", { ID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if(res.Success){
+                            $('#Group_dg').datagrid('reload');
+                        }
+                     })
+                }
+            });
+        }
+    }
+
+    function Group_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if(res.Success){
+            $('#Group_kwindow').dialog('close')
+            $('#Group_dg').datagrid('reload');
+        }
+    }
+
+    function Group_getSearch() {
+        $('#Group_dg').datagrid('load', {
+            Group_SearchName: $('#Group_SearchName').val()
+        });
+    }
+    $(function () {
+        var resizeHandler = null;
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#Group_dg').datagrid('resize');
+            }, 200);
+        });
+    })
+</script>
+

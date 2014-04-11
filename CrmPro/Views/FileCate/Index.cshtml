@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "FileCate";
+}
+
+<table id="FileCate_dg" title="FileCate" class="easyui-treegrid"  
+    url="@Url.Action("getall")" idField='ID' treeField='CateName'
+    toolbar="#FileCate_toolbar" pagination="true" pagePosition="bottom"  pageList="[500,1000]"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+           <th field="ID" width="50">ID</th>
+           <th field="CateName" width="50">CateName</th>
+           <th field="PID" width="50">PID</th>
+           <th field="Code" width="50">Code</th>
+           <th field="Level" width="50">Level</th>
+           <th field="OrderIndex" width="50">OrderIndex</th>
+           
+        </tr>
+    </thead>
+</table>
+<div id="FileCate_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="FileCate_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="FileCate_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="FileCate_deleteSingle()">删除</a>
+    <div id="searchbox">
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="button"  onclick="FileCate_getSearch()" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-search"></i>
+                查 询</button>
+        </div>
+    </div>
+</div>
+
+<div id="FileCate_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:FileCate_onformLoad" style="width: 500px; height: 300px;">
+</div>
+
+<script type="text/javascript">
+
+    function FileCate_create() {
+        var url = "@Url.Action("Create")";
+        $('#FileCate_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function FileCate_onformLoad() {
+        var title = $('#FileCate_kwindow').find('form').attr('formtitle');
+        $('#FileCate_kwindow')
+        .dialog('setTitle', title)
+        $.validator.unobtrusive.parse($('#FileCate_kwindow'));
+    }
+
+    function FileCate_edit() {
+        var row = $('#FileCate_dg').treegrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.ID;
+            $('#FileCate_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function FileCate_deleteSingle() {
+        var row = $('#FileCate_dg').treegrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                     $.post("@Url.Action("Delete")", { ID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if(res.Success){
+                            $('#FileCate_dg').treegrid('reload');
+                        }
+                     })
+                }
+            });
+        }
+    }
+
+    function FileCate_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if(res.Success){
+            $('#FileCate_kwindow').dialog('close')
+            $('#FileCate_dg').treegrid('reload');
+        }
+    }
+
+    function FileCate_getSearch() {
+        $('#FileCate_dg').treegrid('load', {
+            FileCate_SearchName: $('#FileCate_SearchName').val()
+        });
+    }
+    
+     $(function () {
+        var resizeHandler = null;
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#FileCate_dg').treegrid('resize');
+            }, 200);
+        });
+    })
+</script>
+

@@ -1,0 +1,17 @@
+﻿<div class="ajax-form-container">
+    @using (Ajax.BeginForm("create", "CoopCate", new AjaxOptions()
+{
+    OnSuccess = "CoopCate_ajaxFormSuccess",
+    OnFailure = "ajaxFormFailure"
+}, new { formtitle = "添加CoopCate" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="submit" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-save"></i>
+                保 存</button>
+        </div>
+    }
+</div>
+

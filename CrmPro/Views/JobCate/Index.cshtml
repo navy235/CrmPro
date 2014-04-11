@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "JobCate";
+}
+
+<table id="JobCate_dg" title="JobCate" class="easyui-treegrid"  
+    url="@Url.Action("getall")" idField='ID' treeField='CateName'
+    toolbar="#JobCate_toolbar" pagination="true" pagePosition="bottom"  pageList="[500,1000]"
+    rownumbers="true" fitcolumns="true" singleselect="true" fit="true" striped="true">
+    <thead>
+        <tr>
+           <th field="ID" width="50">ID</th>
+           <th field="CateName" width="50">CateName</th>
+           <th field="PID" width="50">PID</th>
+           <th field="Code" width="50">Code</th>
+           <th field="Level" width="50">Level</th>
+           <th field="OrderIndex" width="50">OrderIndex</th>
+           
+        </tr>
+    </thead>
+</table>
+<div id="JobCate_toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="JobCate_create()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="JobCate_edit()">编辑</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="JobCate_deleteSingle()">删除</a>
+    <div id="searchbox">
+        @Html.EditorForModel()
+        <div class="form-field form-field-submit">
+            <button type="button"  onclick="JobCate_getSearch()" class="btn btn-green btn-save ">
+                <i class="icon-button icon-btn-search"></i>
+                查 询</button>
+        </div>
+    </div>
+</div>
+
+<div id="JobCate_kwindow" class="easyui-dialog" data-options="iconCls:'icon-save',modal:true,closed:true,onLoad:JobCate_onformLoad" style="width: 500px; height: 300px;">
+</div>
+
+<script type="text/javascript">
+
+    function JobCate_create() {
+        var url = "@Url.Action("Create")";
+        $('#JobCate_kwindow').dialog('open')
+        .dialog('refresh', url)
+
+    }
+    function JobCate_onformLoad() {
+        var title = $('#JobCate_kwindow').find('form').attr('formtitle');
+        $('#JobCate_kwindow')
+        .dialog('setTitle', title)
+        $.validator.unobtrusive.parse($('#JobCate_kwindow'));
+    }
+
+    function JobCate_edit() {
+        var row = $('#JobCate_dg').treegrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要编辑的行');
+        } else {
+            var url = "@Url.Action("Edit")" + "/" + row.ID;
+            $('#JobCate_kwindow').dialog('open')
+            .dialog('refresh', url)
+        }
+    }
+
+    function JobCate_deleteSingle() {
+        var row = $('#JobCate_dg').treegrid('getSelected');
+        if (!row) {
+            Maitonn.JHelper.showError('提醒', '请选择要删除的行');
+        } else {
+            var id = row.ID;
+            $.messager.confirm('删除提醒', '确认删除该项?', function (r) {
+                if (r) {
+                     $.post("@Url.Action("Delete")", { ID: id }, function (res) {
+                        Maitonn.JHelper.showMessage(res);
+                        if(res.Success){
+                            $('#JobCate_dg').treegrid('reload');
+                        }
+                     })
+                }
+            });
+        }
+    }
+
+    function JobCate_ajaxFormSuccess(res) {
+        Maitonn.JHelper.showMessage(res);
+        if(res.Success){
+            $('#JobCate_kwindow').dialog('close')
+            $('#JobCate_dg').treegrid('reload');
+        }
+    }
+
+    function JobCate_getSearch() {
+        $('#JobCate_dg').treegrid('load', {
+            JobCate_SearchName: $('#JobCate_SearchName').val()
+        });
+    }
+    
+     $(function () {
+        var resizeHandler = null;
+        $(window).resize(function () {
+            if (resizeHandler) clearTimeout(resizeHandler);
+            resizeHandler = setTimeout(function () {
+                $('#JobCate_dg').treegrid('resize');
+            }, 200);
+        });
+    })
+</script>
+
